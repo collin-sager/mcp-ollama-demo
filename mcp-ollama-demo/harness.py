@@ -24,6 +24,9 @@ Rules:
 - Use "chat" for normal conversation, clarifying questions, and when no tool is needed.
 - Use "action" when a tool call is needed to fulfill the request.
 - If using "action", call exactly one tool per response.
+- If the user asks to list/read/write/edit/move/delete files or directories, prefer "action" with the relevant file tool.
+- For "list ... in workspace" style requests, call "list_dir" with {"dir":"."} unless the user specifies a subdirectory.
+- Do not return an empty chat message.
 - Keep responses concise and helpful.
 """
 
@@ -126,7 +129,10 @@ async def run(prompt: str, max_steps: int = 8):
                         mode = "chat"
 
                 if mode == "chat":
-                    return decision.get("message") or decision.get("final", "")
+                    message = decision.get("message") or decision.get("final", "")
+                    if message:
+                        return message
+                    return f"(empty chat response)\nRaw model output:\n{raw}"
 
                 if mode != "action":
                     raise RuntimeError(f"Invalid decision mode: {mode!r}\nRaw:\n{raw}")

@@ -4,7 +4,8 @@
   "description": "",
   "type": "module",
   "scripts": {
-    "start": "tsx server.ts"
+    "start": "tsx server.ts",
+    "test": "node --import tsx --test test/tools.test.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.26.0",
